@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="CaveVoxelData" format=3 uid="uid://bofa5msjgpm2w"]
+
+[ext_resource type="Script" uid="uid://brerktk8lflgb" path="res://cave_gen_tool/cave_voxel_data/cave_voxel_data.gd" id="1_l0hap"]
+
+[resource]
+script = ExtResource("1_l0hap")
+texture_index = 2
+min_height = -15.0
+max_height = -5.0
+neighbor_chances = {
+0: 0.05
+}
+metadata/_custom_type_script = "uid://brerktk8lflgb"

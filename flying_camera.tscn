@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://jhfruvrqqktf"]
+
+[ext_resource type="Script" uid="uid://c6cjj2kee3k25" path="res://FreeLookCamera.gd" id="1_lv5lo"]
+
+[node name="FlyingCamera" type="Camera3D"]
+script = ExtResource("1_lv5lo")
+
+[node name="VoxelViewer" type="VoxelViewer" parent="."]
+
+[node name="DigCast" type="RayCast3D" parent="."]
+target_position = Vector3(0, 0, -2)

@@ -1,0 +1,41 @@
+[gd_scene load_steps=16 format=3 uid="uid://dspkvmg4oah8m"]
+
+[ext_resource type="Script" uid="uid://do66m6wdildlq" path="res://cave_gen_tool/voxel_terrain.gd" id="1_b3j0d"]
+[ext_resource type="Shader" uid="uid://c5o48ypcjnig3" path="res://cave_gen_tool/voxel_terrain_texture.gdshader" id="1_klpek"]
+[ext_resource type="Texture2D" uid="uid://bgmgrntdslgbf" path="res://Stone_05-128x128.png" id="3_k7s6y"]
+[ext_resource type="Texture2D" uid="uid://b14eadvxq83ho" path="res://Dirt_19-128x128.png" id="4_kd6n0"]
+[ext_resource type="Texture2D" uid="uid://b8nhwimsksyar" path="res://Dirt_10-128x128.png" id="5_age2h"]
+[ext_resource type="Texture2D" uid="uid://cbmmy7wigjfpj" path="res://Stone_13-128x128.png" id="6_tsfok"]
+[ext_resource type="Script" uid="uid://brerktk8lflgb" path="res://cave_gen_tool/cave_voxel_data/cave_voxel_data.gd" id="7_yc5ou"]
+[ext_resource type="Resource" uid="uid://b1eitinpbqp23" path="res://cave_gen_tool/cave_voxel_data/voxel_rock.tres" id="8_cidbq"]
+[ext_resource type="Resource" uid="uid://4pdyy24cm4pr" path="res://cave_gen_tool/cave_voxel_data/voxel_grass.tres" id="9_53pyy"]
+[ext_resource type="Resource" uid="uid://bofa5msjgpm2w" path="res://cave_gen_tool/cave_voxel_data/voxel_dirt.tres" id="10_5qyog"]
+[ext_resource type="Resource" uid="uid://q35rdmm1nfhq" path="res://cave_gen_tool/cave_voxel_data/voxel_none.tres" id="11_alr15"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_y3qst"]
+render_priority = 0
+shader = ExtResource("1_klpek")
+shader_parameter/u_transition_mask = 0
+shader_parameter/uv_scale = 0.5
+shader_parameter/paint_strength = 1.0
+
+[sub_resource type="VoxelStreamMemory" id="VoxelStreamMemory_1ryb3"]
+
+[sub_resource type="VoxelGeneratorFlat" id="VoxelGeneratorFlat_k7kmd"]
+height = 1.0
+
+[sub_resource type="VoxelMesherTransvoxel" id="VoxelMesherTransvoxel_7cu7o"]
+texturing_mode = 1
+
+[node name="VoxelTerrain" type="VoxelTerrain" groups=["terrain"]]
+collision_layer = -2147483647
+material_override = SubResource("ShaderMaterial_y3qst")
+stream = SubResource("VoxelStreamMemory_1ryb3")
+generator = SubResource("VoxelGeneratorFlat_k7kmd")
+mesher = SubResource("VoxelMesherTransvoxel_7cu7o")
+script = ExtResource("1_b3j0d")
+texture_rock = ExtResource("3_k7s6y")
+texture_grass = ExtResource("4_kd6n0")
+texture_dirt = ExtResource("5_age2h")
+texture_none = ExtResource("6_tsfok")
+voxel_data = Array[ExtResource("7_yc5ou")]([ExtResource("8_cidbq"), ExtResource("9_53pyy"), ExtResource("10_5qyog"), ExtResource("11_alr15")])
