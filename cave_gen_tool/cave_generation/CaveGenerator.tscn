@@ -5,11 +5,15 @@
 
 [node name="CaveGenerator" type="Node3D" unique_id=2143282384 node_paths=PackedStringArray("walkers") groups=["generator"]]
 script = ExtResource("1_byicc")
-can_generate = true
-show_walker = false
-walkers = [NodePath("CaveWalker")]
+walkers = [NodePath("CaveWalker"), NodePath("CaveWalker2")]
 
 [node name="CaveWalker" parent="." unique_id=489407882 instance=ExtResource("2_pvqeu")]
 random_walk_length = 50
 y_range = Vector2(-0.5, 0.1)
 z_range = Vector2(-0.3, 0.3)
+
+[node name="CaveWalker2" parent="." unique_id=46955504 instance=ExtResource("2_pvqeu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -11.992096)
+random_walk_length = 30
+removal_size = 2.0
+y_range = Vector2(-0.5, 0.2)

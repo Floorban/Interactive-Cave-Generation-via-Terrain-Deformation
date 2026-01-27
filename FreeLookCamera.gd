@@ -1,6 +1,5 @@
 class_name FreeLookCamera extends Camera3D
 
-# Modifier keys' speed multiplier
 const SHIFT_MULTIPLIER = 2.5
 const ALT_MULTIPLIER = 1.0 / SHIFT_MULTIPLIER
 
@@ -39,7 +38,6 @@ func _process(delta: float) -> void:
 func mine_voxel(world_pos: Vector3, radius: float, tool_type: String):
 	var voxel_pos: Vector3 = CaveConstants.world_to_voxel(voxel_terrain, world_pos)
 	var meta = voxel_tool.get_voxel_metadata(voxel_pos)
-
 	var voxel_id: int = 0
 
 	if meta != null and meta.has("id"):
@@ -68,17 +66,13 @@ func mine_voxel(world_pos: Vector3, radius: float, tool_type: String):
 
 	# check tool type
 	if voxel_data.tool_type != "" and voxel_data.tool_type != tool_type:
-		# print("wrong tool, need:", voxel_data.tool_type)
+		print("wrong tool, need:", voxel_data.tool_type)
 		return
 
-	# get current damage
 	var damage: int = 0
 	if meta != null and meta.has("damage"):
 		damage = meta["damage"]
-
-	damage += 1 # TODO: add tool power
-
-	# print("ID:", voxel_id, " Current damage:", damage, " Max HP:", voxel_data.base_hp)
+	damage += 1
 
 	if damage >= voxel_data.base_hp:
 		# fully destroyed
@@ -95,9 +89,9 @@ func mine_voxel(world_pos: Vector3, radius: float, tool_type: String):
 			"damage": damage,
 		})
 
-		# voxel_tool.mode = VoxelTool.MODE_TEXTURE_PAINT
-		# voxel_tool.texture_index = voxel_data.texture_index
-		# voxel_tool.do_sphere(world_pos, 0.1)
+		#voxel_tool.mode = VoxelTool.MODE_TEXTURE_PAINT
+		#voxel_tool.texture_index = voxel_data.texture_index
+		#voxel_tool.do_sphere(world_pos, 0.1)
 
 func paint_neighbor(center_pos: Vector3i, radius: float, voxel_data: CaveVoxelData):
 	var neighbors = CaveConstants.get_nearby_voxel_positions(center_pos)

@@ -12,8 +12,6 @@ class_name CaveWalker
 @export var y_range : Vector2 = Vector2(-0.5,0)
 @export var z_range : Vector2 = Vector2(-0.5,0.5)
 
-@export var tresure_chance : float = 0.5
-
 func get_walker_range() -> Vector3:
 	return Vector3(
 		randf_range(x_range.x, x_range.y),

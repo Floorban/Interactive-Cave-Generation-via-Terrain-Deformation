@@ -4,45 +4,48 @@ class_name CaveGenerator
 
 signal finish_gen
 
-@export var can_generate := false
-
 @export var voxel_terrain : Voxel
 var voxel_tool : VoxelTool
 
-@export var show_walker : bool = true
 @export var walkers : Array[CaveWalker] = []
 var current_walker : CaveWalker
 var last_walker : CaveWalker
 
 var current_walker_index : int = 0
 @export var ceiling_thickness_m : int = 5
-@export var do_wall_decoration_step : bool = true
 @export var do_voxel_addition : bool = true
+
+@export var do_wall_decoration_step : bool = true
+@export var wall_marker_positions: Array[Vector3] = []
 
 var random_walk_positions : Array[Vector3] = []
 var affected_voxels: Array[Vector3] = []
-var undo_voxel_cache := {}  # Dictionary<Vector3i, int>
 var generation_stack: Array = []
 var current_generation := {}  # Dictionary<Vector3i, int>
+
 var noise : FastNoiseLite
 
-#func _ready() -> void:
-	#if not can_generate: return
-	#setup()
-	#if show_walker and current_walker:
-		#current_walker.show()
-	#await get_tree().physics_frame
-	#random_walk()
+func _ready() -> void:
+	if walkers.is_empty():
+		return
+
+	if current_generation.is_empty():
+		current_generation = {
+			"spheres": [],
+			"walker_start_pos": walkers[0].global_position
+		}
+
+	setup()
+	random_walk()
 
 func setup():
 	if voxel_terrain == null:
-		push_error("Voxel terrain not assigned")
-		return
+		voxel_terrain = get_tree().get_first_node_in_group("terrain")
 
 	voxel_tool = voxel_terrain.get_voxel_tool()
 	current_walker = walkers[0]
 	last_walker = current_walker
-	#current_walker.global_position = global_position
+	
 	noise = FastNoiseLite.new()
 	noise.seed = randi()
 	noise.frequency = 0.03
@@ -79,11 +82,6 @@ func undo_generate() -> void:
 
 	print("Reverted last cave generation")
 
-func reset_walkers():
-	current_walker_index = 0
-	current_walker = walkers[0]
-	current_walker.global_position = global_position
-
 func finish_walk():
 	#current_walker.queue_free()
 	last_walker = current_walker
@@ -107,17 +105,12 @@ func random_walk():
 			current_walker.global_position.y,
 			-1000,
 			voxel_terrain.generator.height - ceiling_thickness_m)
-
 		if i % 2 == 0:
 			random_walk_positions.append(current_walker.global_position)
-
 		if current_walker.display_speed > 0:
 			await get_tree().create_timer(current_walker.display_speed).timeout
 
-		# Carve out a chunk
 		do_sphere_removal()
-
-		# Add rock formations or walls occasionally
 		if do_voxel_addition:
 			var wall_point = get_random_wall_point()
 			if wall_point:
@@ -135,9 +128,12 @@ func wall_additions_pass():
 		var raycast_result : VoxelRaycastResult = voxel_tool.raycast(walk_position, get_random_direction(true), 20)
 		if not raycast_result:
 			continue
-
+		
 		current_walker.global_position = walk_position
+		wall_marker_positions.append(raycast_result.position)
+
 	finish_walk()
+
 
 func do_sphere_removal():
 	var radius = get_removal_size()
@@ -161,7 +157,7 @@ func do_sphere_addition(at_point: bool = false, global_point: Vector3 = Vector3.
 	else:
 		pos = current_walker.global_position
 
-	voxel_tool.do_sphere(pos, get_removal_size(1) / 2.0)
+	voxel_tool.do_sphere(pos, get_removal_size(current_walker.removal_size) / 2.0)
 
 func set_voxel_meta_data():
 	if affected_voxels.is_empty():
@@ -213,7 +209,7 @@ func paint_voxel_and_neighbors(voxel_pos: Vector3i, radius: float):
 
 func get_texture_for_height(y: float) -> int:
 	if y > -2:
-		return  voxel_terrain.voxel_data.size() - 1# none
+		return  voxel_terrain.voxel_data.size() - 1 # none
 
 	var matching_voxels: Array = []
 	for v in voxel_terrain.voxel_data:

@@ -98,10 +98,8 @@ func _on_decorate_pressed() -> void:
 	if get_current_scene() == null: return
 	var scene_root = get_current_scene()
 	if cave_decor_obj.edited_resource:
-		var obj = cave_decor_obj.edited_resource.instantiate()
-		scene_root.add_child(obj)
-		obj.owner = scene_root
-		obj.name = "Obj"
+		var generator = get_tree().get_first_node_in_group("generator")
+		spawn_objects_from_markers(generator, cave_decor_obj.edited_resource)
 	else:
 		print("no obj selected")
 
@@ -111,3 +109,11 @@ func get_current_scene():
 		push_warning("No active scene found")
 		return null
 	return scene_root
+
+func spawn_objects_from_markers(generator: CaveGenerator, obj_scene: PackedScene):
+	for pos in generator.wall_marker_positions:
+		var obj = obj_scene.instantiate()
+		generator.add_child(obj)
+		obj.owner = generator.owner
+		obj.name = "Rock"
+		obj.global_position = pos
