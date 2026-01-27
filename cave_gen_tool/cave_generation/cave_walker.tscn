@@ -1,6 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://dbejoqpq6kkwd"]
+[gd_scene format=3 uid="uid://dbejoqpq6kkwd"]
 
-[ext_resource type="Script" uid="uid://n5uc70s6gusk" path="res://terrain/cave_generation/cave_walker.gd" id="1_jpdgy"]
+[ext_resource type="Script" uid="uid://n5uc70s6gusk" path="res://cave_gen_tool/cave_generation/cave_walker.gd" id="1_jpdgy"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lnkjg"]
 albedo_color = Color(0.29210714, 0.7160237, 0.5156437, 1)
@@ -8,11 +8,13 @@ albedo_color = Color(0.29210714, 0.7160237, 0.5156437, 1)
 [sub_resource type="SphereMesh" id="SphereMesh_oal0a"]
 material = SubResource("StandardMaterial3D_lnkjg")
 
-[node name="CaveWalker" type="MeshInstance3D"]
+[node name="CaveWalker" type="MeshInstance3D" unique_id=46955504]
 mesh = SubResource("SphereMesh_oal0a")
 script = ExtResource("1_jpdgy")
+removal_size = 1.0
+display_speed = 0.001
 
-[node name="DebugRaycast" type="RayCast3D" parent="."]
+[node name="DebugRaycast" type="RayCast3D" parent="." unique_id=483499673]
 target_position = Vector3(0, 0, -30)
 debug_shape_custom_color = Color(0.88235295, 0, 0, 1)
 debug_shape_thickness = 5

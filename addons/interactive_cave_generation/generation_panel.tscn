@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://bp5sc7sxk6dmv"]
 
 [ext_resource type="Script" uid="uid://b5lynxgly4ipl" path="res://addons/interactive_cave_generation/generation_panel.gd" id="1_nbawv"]
+[ext_resource type="Script" uid="uid://bi1fcx14mq1je" path="res://addons/interactive_cave_generation/cave_generator_resource_picker.gd" id="2_102p1"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_nb3f1"]
 font_size = 18
@@ -25,12 +26,65 @@ alignment = 1
 unique_name_in_owner = true
 custom_minimum_size = Vector2(60, 30)
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 12
 text = "Clear"
+
+[node name="ButtonUndo" type="Button" parent="HBoxContainer" unique_id=391602680]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(60, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+text = "Undo
+"
 
 [node name="ButtonGenerate" type="Button" parent="HBoxContainer" unique_id=1292320316]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(60, 30)
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 12
-text = "Create"
+text = "Generate
+"
+
+[node name="HSeparator" type="HSeparator" parent="." unique_id=873238296]
+layout_mode = 2
+
+[node name="CaveResourcePicker" type="EditorResourcePicker" parent="." unique_id=1741627109]
+layout_mode = 2
+base_type = "PackedScene"
+script = ExtResource("2_102p1")
+metadata/_custom_type_script = "uid://bi1fcx14mq1je"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="." unique_id=2101901850]
+layout_mode = 2
+alignment = 1
+
+[node name="ButtonClearDecor" type="Button" parent="HBoxContainer2" unique_id=482095172]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(60, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+text = "ClearDecor
+"
+
+[node name="ButtonUndoDecor" type="Button" parent="HBoxContainer2" unique_id=1562842985]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(60, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+text = "Undo
+"
+
+[node name="ButtonDecorate" type="Button" parent="HBoxContainer2" unique_id=491886573]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(60, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+text = "Decorate
+
+"

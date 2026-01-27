@@ -1,3 +1,4 @@
+@tool
 extends Node3D
 class_name CaveGenerator
 
@@ -5,12 +6,13 @@ signal finish_gen
 
 @export var can_generate := false
 
-@onready var voxel_terrain : Voxel = get_tree().get_first_node_in_group("terrain")
-@onready var voxel_tool : VoxelTool = voxel_terrain.get_voxel_tool()
+@export var voxel_terrain : Voxel
+var voxel_tool : VoxelTool
 
 @export var show_walker : bool = true
 @export var walkers : Array[CaveWalker] = []
-@onready var current_walker : CaveWalker
+var current_walker : CaveWalker
+var last_walker : CaveWalker
 
 var current_walker_index : int = 0
 @export var ceiling_thickness_m : int = 5
@@ -19,25 +21,33 @@ var current_walker_index : int = 0
 
 var random_walk_positions : Array[Vector3] = []
 var affected_voxels: Array[Vector3] = []
-@onready var noise := FastNoiseLite.new()
+var noise : FastNoiseLite
 
-func _ready() -> void:
-	if not can_generate: return
+
+#func _ready() -> void:
+	#if not can_generate: return
+	#setup()
+	#if show_walker and current_walker:
+		#current_walker.show()
+	#await get_tree().physics_frame
+	#random_walk()
+
+func generate() -> void:
 	setup()
-	if show_walker and current_walker:
-		current_walker.show()
-	await get_tree().physics_frame
 	random_walk()
 
 func setup():
 	current_walker = walkers[0]
+	last_walker = current_walker
 	#current_walker.global_position = global_position
+	noise = FastNoiseLite.new()
 	noise.seed = randi()
 	noise.frequency = 0.03
 	noise.fractal_octaves = 3
 
 func finish_walk():
-	current_walker.queue_free()
+	#current_walker.queue_free()
+	last_walker = current_walker
 	current_walker_index += 1
 	if current_walker_index < walkers.size():
 		current_walker = walkers[current_walker_index]
