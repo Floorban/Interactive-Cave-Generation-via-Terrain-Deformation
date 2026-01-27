@@ -21,8 +21,10 @@ var current_walker_index : int = 0
 
 var random_walk_positions : Array[Vector3] = []
 var affected_voxels: Array[Vector3] = []
+var undo_voxel_cache := {}  # Dictionary<Vector3i, int>
+var generation_stack: Array = []
+var current_generation := {}  # Dictionary<Vector3i, int>
 var noise : FastNoiseLite
-
 
 #func _ready() -> void:
 	#if not can_generate: return
@@ -32,11 +34,12 @@ var noise : FastNoiseLite
 	#await get_tree().physics_frame
 	#random_walk()
 
-func generate() -> void:
-	setup()
-	random_walk()
-
 func setup():
+	if voxel_terrain == null:
+		push_error("Voxel terrain not assigned")
+		return
+
+	voxel_tool = voxel_terrain.get_voxel_tool()
 	current_walker = walkers[0]
 	last_walker = current_walker
 	#current_walker.global_position = global_position
@@ -44,6 +47,42 @@ func setup():
 	noise.seed = randi()
 	noise.frequency = 0.03
 	noise.fractal_octaves = 3
+
+func generate() -> void:
+	current_generation = {
+		"spheres": [],
+		"walker_start_pos": walkers[0].global_position
+	}
+	generation_stack.append(current_generation)
+
+	setup()
+	random_walk()
+
+func undo_generate() -> void:
+	if generation_stack.is_empty():
+		print("No generation to undo")
+		return
+
+	var last_generation = generation_stack.pop_back()
+	var spheres : Array = last_generation["spheres"]
+
+	# Restore voxels
+	voxel_tool.mode = VoxelTool.MODE_ADD
+	for i in range(spheres.size() - 1, -1, -1):
+		var s = spheres[i]
+		voxel_tool.do_sphere(s["pos"], s["radius"])
+
+	# Restore walker state
+	current_walker_index = 0
+	current_walker = walkers[0]
+	current_walker.global_position = last_generation["walker_start_pos"]
+
+	print("Reverted last cave generation")
+
+func reset_walkers():
+	current_walker_index = 0
+	current_walker = walkers[0]
+	current_walker.global_position = global_position
 
 func finish_walk():
 	#current_walker.queue_free()
@@ -102,19 +141,16 @@ func wall_additions_pass():
 
 func do_sphere_removal():
 	var radius = get_removal_size()
-	voxel_tool.mode = VoxelTool.MODE_REMOVE
-	voxel_tool.do_sphere(current_walker.global_position, radius)
+	var pos = current_walker.global_position
 
-	# record all voxels near the surface
-	var voxel_center = Vector3(CaveConstants.world_to_voxel(voxel_terrain, current_walker.global_position))
-	var int_r = radius
-	for x in range(-int_r, int_r + 1):
-		for y in range(-int_r, int_r + 1):
-			for z in range(-int_r, int_r + 1):
-				var voxel_pos = voxel_center + Vector3(x, y, z)
-				if Vector3(x, y, z).length() <= radius:
-					if not affected_voxels.has(voxel_pos):
-						affected_voxels.append(voxel_pos)
+	# Record the operation
+	current_generation["spheres"].append({
+		"pos": pos,
+		"radius": radius
+	})
+
+	voxel_tool.mode = VoxelTool.MODE_REMOVE
+	voxel_tool.do_sphere(pos, radius)
 
 func do_sphere_addition(at_point: bool = false, global_point: Vector3 = Vector3.ZERO):
 	voxel_tool.mode = VoxelTool.MODE_ADD

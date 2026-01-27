@@ -45,7 +45,7 @@ func _init_generator_essentials() -> void:
 	generator.name = "CaveGenerator"
 	(generator as CaveGenerator).voxel_terrain = terrian
 	(generator as CaveGenerator).voxel_tool = terrian.get_voxel_tool()
-		
+	(generator as CaveGenerator).generate()
 	print("Start generating")
 
 func _spawn_player_camera(free_cam: bool) -> void:
@@ -59,30 +59,33 @@ func _spawn_player_camera(free_cam: bool) -> void:
 
 func _on_generate_pressed() -> void:
 	_init_generator_essentials()
-	#undo_redo.create_action("Cave Generation: Cave Generated")
-	#undo_redo.add_do_property("Cave Generation: Cave Generated")
+	#undo_redo.create_action("Cave Generation: Has Random Walked")
+	#undo_redo.add_do_property(  "Cave Generation: Cave Generated")
 	#undo_redo.add_undo_property("Cave Generation: Cave Generated")
 	#undo_redo.commit_action()
 
 func _on_gen_undo_pressed() -> void:
-	if get_current_scene() == null: return
-	var scene_root = get_current_scene()
-	
-	var terrian = get_tree().get_first_node_in_group("terrain")
-	if terrian: 
-		terrian.queue_free()
-	
-	var new_terrian = TERRAIN.instantiate()
-	scene_root.add_child(new_terrian)
-	new_terrian.owner = scene_root
-	new_terrian.name = "Terrian"
-	
 	var generator = get_tree().get_first_node_in_group("generator")
-	if generator and generator is CaveGenerator:
-		generator.voxel_terrain = new_terrian
-		generator.voxel_tool = new_terrian.get_voxel_tool()
-		generator.last_walker.global_position = global_position
-		print("clear caves")
+	if generator is CaveGenerator:
+		generator.undo_generate()
+	#if get_current_scene() == null: return
+	#var scene_root = get_current_scene()
+	#
+	#var terrian = get_tree().get_first_node_in_group("terrain")
+	#if terrian: 
+		#terrian.queue_free()
+	#
+	#var new_terrian = TERRAIN.instantiate()
+	#scene_root.add_child(new_terrian)
+	#new_terrian.owner = scene_root
+	#new_terrian.name = "Terrian"
+	#
+	#var generator = get_tree().get_first_node_in_group("generator")
+	#if generator is CaveGenerator:
+		#generator.voxel_terrain = new_terrian
+		#generator.voxel_tool = new_terrian.get_voxel_tool()
+		#generator.undo_generate()
+		#print("clear caves")
 
 func _on_clear_pressed() -> void:
 	var terrian = get_tree().get_first_node_in_group("terrain")

@@ -14,7 +14,6 @@ func _disable_plugin() -> void:
 
 func _enter_tree() -> void:
 	panel = GENERATION_PANEL.instantiate()
-	#panel.undo_rodo = get_undo_redo()
 	add_control_to_dock(DOCK_SLOT_LEFT_BL, panel)
 
 func _exit_tree() -> void:
