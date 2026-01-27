@@ -1,9 +1,5 @@
 [gd_scene format=3 uid="uid://dxer6rqpnyv36"]
 
-[ext_resource type="PackedScene" uid="uid://hik4wbxfsq2p" path="res://cave_gen_tool/cave_generation/CaveGenerator.tscn" id="1_236hd"]
-[ext_resource type="PackedScene" uid="uid://dspkvmg4oah8m" path="res://cave_gen_tool/voxel_terrain.tscn" id="1_km7yk"]
-[ext_resource type="PackedScene" uid="uid://jhfruvrqqktf" path="res://flying_camera.tscn" id="3_km7yk"]
-
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_236hd"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
 ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -25,11 +21,3 @@ environment = SubResource("Environment_ylnpg")
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1513817280]
 transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, 0)
 shadow_enabled = true
-
-[node name="VoxelTerrain" parent="." unique_id=42060063 instance=ExtResource("1_km7yk")]
-
-[node name="CaveGenerator" parent="." unique_id=1499617946 instance=ExtResource("1_236hd")]
-can_generate = true
-
-[node name="FlyingCamera" parent="." unique_id=52275266 node_paths=PackedStringArray("voxel_terrain") instance=ExtResource("3_km7yk")]
-voxel_terrain = NodePath("../VoxelTerrain")

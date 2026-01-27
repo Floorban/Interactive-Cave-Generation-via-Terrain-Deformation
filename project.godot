@@ -19,6 +19,10 @@ run/main_scene="uid://dxer6rqpnyv36"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/interactive_cave_generation/plugin.cfg")
+
 [input]
 
 dig={

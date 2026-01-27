@@ -1,0 +1,36 @@
+[gd_scene format=3 uid="uid://bp5sc7sxk6dmv"]
+
+[ext_resource type="Script" uid="uid://b5lynxgly4ipl" path="res://addons/interactive_cave_generation/generation_panel.gd" id="1_nbawv"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_nb3f1"]
+font_size = 18
+font_color = Color(0.42352942, 1, 1, 1)
+outline_size = 8
+outline_color = Color(0, 0, 0, 1)
+
+[node name="GenerationPanel" type="VBoxContainer" unique_id=1073525388]
+script = ExtResource("1_nbawv")
+
+[node name="Label" type="Label" parent="." unique_id=1656085971]
+layout_mode = 2
+text = "Cave Generator"
+label_settings = SubResource("LabelSettings_nb3f1")
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=690087653]
+layout_mode = 2
+alignment = 1
+
+[node name="ButtonClear" type="Button" parent="HBoxContainer" unique_id=1488877726]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(60, 30)
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Clear"
+
+[node name="ButtonGenerate" type="Button" parent="HBoxContainer" unique_id=1292320316]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(60, 30)
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Create"

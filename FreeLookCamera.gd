@@ -28,7 +28,7 @@ var _shift = false
 var _alt = false
 
 signal voxel_dug(world_pos: Vector3)
-@export var voxel_terrain : Voxel
+@onready var voxel_terrain : Voxel = get_tree().get_first_node_in_group("terrain")
 @onready var voxel_tool : VoxelTool = voxel_terrain.get_voxel_tool()
 @onready var dig_cast : RayCast3D = $DigCast
 
