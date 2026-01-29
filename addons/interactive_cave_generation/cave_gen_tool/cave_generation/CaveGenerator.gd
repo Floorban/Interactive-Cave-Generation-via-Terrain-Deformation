@@ -7,6 +7,7 @@ signal finish_gen
 @export var voxel_terrain : Voxel
 var voxel_tool : VoxelTool
 
+@export var walker_scene : PackedScene
 @export var walkers : Array[CaveWalker] = []
 var current_walker : CaveWalker
 var last_walker : CaveWalker
@@ -25,8 +26,80 @@ var current_generation := {}  # Dictionary<Vector3i, int>
 
 var noise : FastNoiseLite
 
-func _ready() -> void:
+@export_range(1, 10) var cave_branch: int:
+	set(value): 
+		cave_branch = value
+		set_cave_branches(value)
+@export_range(0.5, 5, 0.1) var cave_size: float:
+	set(value): 
+		cave_size = value
+		set_walker_size(value)
+@export_range(10, 100, 1) var cave_length: int:
+	set(value): 
+		cave_length = value
+		set_walker_walk_length(value)
+
+@export_range(0, 1, 0.05) var cave_density: float
+@export var cave_main_direction : Vector3 = Vector3(1, 0, 0)
+@export var cave_direction_variance : float = 0.5
+
+func get_random_direction(use_float: bool = true) -> Vector3:
+	if use_float:
+		var dir = cave_main_direction + Vector3(
+			randf_range(-cave_direction_variance, cave_direction_variance),
+			randf_range(-cave_direction_variance, cave_direction_variance),
+			randf_range(-cave_direction_variance, cave_direction_variance)
+		)
+		return dir.normalized() * current_walker.removal_size
+	else:
+		return Vector3([-1,0,1].pick_random(), [-1,0,1].pick_random(), [-1,0,1].pick_random())
+
+func set_cave_branches(branch_count: int) -> void:
+	if not walkers.is_empty():
+		for walker in walkers:
+			walker.queue_free()
+	walkers.clear()
+	# Scatter walkers along the main direction
+	for i in range(branch_count):
+		var new_walker = walker_scene.instantiate()
+		add_child(new_walker)
+		new_walker.owner = owner
+		new_walker.name = "Walker"
+		walkers.append(new_walker)
+
+		var base_offset = cave_main_direction.normalized() * (i * cave_density * 5.0)
+		var random_offset = Vector3(
+			randf_range(-1, 1) * cave_density * 3.0,
+			randf_range(-0.5, 0.5) * cave_density * 2.0,
+			randf_range(-1, 1) * cave_density * 3.0
+		)
+
+		new_walker.global_position = global_position + base_offset + random_offset
 	if walkers.is_empty():
+		return
+	walkers[0].global_position = global_position
+
+func set_walker_size(new_size: float) -> void:
+	if walkers.size() == 0: 
+		return
+	
+	for walker in walkers:
+		walker.removal_size = (new_size / 2) * randf_range(0.8, 1.2)
+	walkers[0].removal_size = new_size
+
+func set_walker_walk_length(new_length: int) -> void:
+	if walkers.size() == 0: 
+		return
+	
+	for walker in walkers:
+		walker.random_walk_length = int((new_length / 2) + randi_range(-10, 10))
+	walkers[0].random_walk_length = new_length
+
+func _ready() -> void:
+	if Engine.is_editor_hint():
+		return
+	if walkers.is_empty():
+		set_cave_branches(cave_branch)
 		return
 
 	if current_generation.is_empty():
@@ -52,6 +125,9 @@ func setup():
 	noise.fractal_octaves = 3
 
 func generate() -> void:
+	set_cave_branches(cave_branch)
+	if walkers.is_empty():
+		return
 	current_generation = {
 		"spheres": [],
 		"walker_start_pos": walkers[0].global_position
@@ -176,8 +252,8 @@ func paint_voxel_and_neighbors(voxel_pos: Vector3i, radius: float):
 		return
 
 	var meta = voxel_tool.get_voxel_metadata(voxel_pos)
-	var tex_id = 1
-	print(tex_id)
+	var tex_id = get_texture_for_height(voxel_pos.y)
+	
 	if meta == null or not meta.has("id"):
 		voxel_tool.set_voxel_metadata(voxel_pos, {
 			"id": tex_id,
@@ -221,7 +297,7 @@ func get_texture_for_height(y: float) -> int:
 		var chosen: CaveVoxelData = matching_voxels.pick_random()
 		return chosen.texture_index
 
-	return voxel_terrain.voxel_data[1].texture_index
+	return voxel_terrain.voxel_data[0].texture_index
 
 func get_voxel_data_for_height(y: float) -> CaveVoxelData:
 	for v in voxel_terrain.voxel_data:
@@ -238,11 +314,3 @@ func get_random_wall_point() -> Vector3:
 	if raycast_result:
 		return raycast_result.position
 	return Vector3.ZERO
-
-func get_random_direction(use_float : bool = true) -> Vector3:
-	if use_float:
-		return current_walker.get_walker_range()
-	return Vector3(
-		[-1, 0, 1].pick_random(),
-		[-1, 0, 1].pick_random(),
-		[-1, 0, 1].pick_random())
