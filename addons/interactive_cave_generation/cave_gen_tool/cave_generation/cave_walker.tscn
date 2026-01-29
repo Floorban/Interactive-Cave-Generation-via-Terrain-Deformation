@@ -11,7 +11,6 @@ material = SubResource("StandardMaterial3D_lnkjg")
 [node name="CaveWalker" type="MeshInstance3D" unique_id=46955504]
 mesh = SubResource("SphereMesh_oal0a")
 script = ExtResource("1_jpdgy")
-random_walk_length = 50
 removal_size = 1.0
 display_speed = 0.001
 

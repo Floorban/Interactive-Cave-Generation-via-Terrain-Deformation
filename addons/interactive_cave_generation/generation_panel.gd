@@ -116,10 +116,11 @@ func _on_gen_undo_pressed() -> void:
 		#print("clear caves")
 
 func _on_clear_pressed() -> void:
-	var generator = get_tree().get_first_node_in_group("generator")
-	if generator: generator.queue_free()
 	var terrian = get_tree().get_first_node_in_group("terrain")
 	if terrian: terrian.queue_free()
+	var generator = get_tree().get_first_node_in_group("generator")
+	if generator is CaveGenerator: 
+		generator.queue_free()
 
 func _on_decorate_pressed(value) -> void:
 	if get_current_scene() == null: return
