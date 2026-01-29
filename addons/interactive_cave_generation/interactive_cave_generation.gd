@@ -14,7 +14,7 @@ func _disable_plugin() -> void:
 
 func _enter_tree() -> void:
 	panel = GENERATION_PANEL.instantiate()
-	add_control_to_dock(DOCK_SLOT_RIGHT_BR, panel)
+	add_control_to_dock(DOCK_SLOT_RIGHT_UL, panel)
 
 func _exit_tree() -> void:
 	remove_control_from_docks(panel)

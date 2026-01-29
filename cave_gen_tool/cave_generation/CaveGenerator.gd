@@ -27,17 +27,8 @@ var noise : FastNoiseLite
 @onready var decoration: Node3D = $Decoration
 
 func _ready() -> void:
-	if walkers.is_empty():
-		return
-
-	if current_generation.is_empty():
-		current_generation = {
-			"spheres": [],
-			"walker_start_pos": walkers[0].global_position
-		}
-
-	setup()
-	random_walk()
+	generate()
+	generate()
 
 func setup():
 	if voxel_terrain == null:
@@ -103,7 +94,7 @@ func random_walk():
 	if not current_walker.can_walk:
 		finish_walk()
 		return
-		
+
 	for i in range(current_walker.random_walk_length):
 		current_walker.global_position += get_random_direction()
 		current_walker.global_position.y = clampf(

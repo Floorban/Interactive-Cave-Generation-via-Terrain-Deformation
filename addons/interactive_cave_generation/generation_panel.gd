@@ -26,6 +26,8 @@ var undo_redo : EditorUndoRedoManager
 @onready var slider_decor_size: HSlider = %SliderDecorSize
 @export var decor_seed: int = 0
 
+@onready var texture_array_editor: TextureArrayEditor = $TextureArrayEditor
+
 func _ready() -> void:
 	button_generate.pressed.connect(_on_generate_pressed)
 	button_undo_gen.pressed.connect(_on_gen_undo_pressed)
@@ -33,6 +35,17 @@ func _ready() -> void:
 	button_clear_decor.pressed.connect(_on_decor_clear_pressed)
 	button_randomize.pressed.connect(_on_randomize_pressed)
 	slider_decor_density.value_changed.connect(_on_decorate_pressed)
+
+func assign_textures_to_voxel(voxel: Voxel) -> void:
+	if texture_array_editor.textures.size() >= 4:
+		voxel.texture_dirt = texture_array_editor.textures[0]
+		voxel.texture_grass = texture_array_editor.textures[1]
+		voxel.texture_rock = texture_array_editor.textures[2]
+		voxel.texture_none = texture_array_editor.textures[3]
+		voxel.set_texture()
+		print("Textures assigned to voxel node")
+	else:
+		push_warning("Not enough textures in the editor array")
 
 func _set_walker_params() -> void:
 	var generator = get_tree().get_first_node_in_group("generator")
@@ -108,6 +121,8 @@ func _spawn_player_camera(free_cam: bool) -> void:
 		camera.name = "FlyingCamera"
 
 func _on_generate_pressed() -> void:
+	var terrian = get_tree().get_first_node_in_group("terrain")
+	if terrian:	assign_textures_to_voxel((terrian as Voxel))
 	_set_walker_params()
 	_init_generator_essentials()
 	#undo_redo.create_action("Cave Generation: Has Random Walked")
