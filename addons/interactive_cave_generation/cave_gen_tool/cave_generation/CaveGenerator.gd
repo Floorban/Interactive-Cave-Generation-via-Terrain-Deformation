@@ -118,8 +118,10 @@ func finish_walk():
 	else:
 		set_voxel_meta_data()
 		finish_gen.emit()
-	random_walk_positions.clear()
-	affected_voxels.clear()
+
+		current_walker_index = 0
+		random_walk_positions.clear()
+		affected_voxels.clear()
 
 func random_walk():
 	if not current_walker:
@@ -186,14 +188,14 @@ func do_sphere_addition(at_point: bool = false, global_point: Vector3 = Vector3.
 	voxel_tool.do_sphere(pos, get_removal_size(current_walker.removal_size) / 2.0)
 
 func set_voxel_meta_data():
-	if affected_voxels.is_empty():
+	if random_walk_positions.is_empty():
 		return
 
 	voxel_tool.mode = VoxelTool.MODE_TEXTURE_PAINT
 	voxel_tool.texture_opacity = 1.0
 	voxel_tool.texture_falloff = 0.0  # no blending
 
-	for voxel_pos in affected_voxels:
+	for voxel_pos in random_walk_positions:
 		paint_voxel_and_neighbors(voxel_pos, 1.0)
 
 func paint_voxel_and_neighbors(voxel_pos: Vector3i, radius: float):
@@ -212,7 +214,7 @@ func paint_voxel_and_neighbors(voxel_pos: Vector3i, radius: float):
 
 		voxel_tool.texture_index = tex_id
 		var world_pos = voxel_terrain.to_global(Vector3(voxel_pos)) # + Vector3.ONE * 0.5
-		voxel_tool.do_sphere(world_pos, radius)
+		voxel_tool.do_sphere(world_pos, 2.5)
 
 	var neighbors = CaveConstants.get_nearby_voxel_positions(voxel_pos)
 	for n_pos in neighbors:
@@ -246,7 +248,7 @@ func get_texture_for_height(y: float) -> int:
 		var chosen: CaveVoxelData = matching_voxels.pick_random()
 		return chosen.texture_index
 
-	return voxel_terrain.voxel_data[0].texture_index
+	return voxel_terrain.voxel_data[1].texture_index
 
 func get_voxel_data_for_height(y: float) -> CaveVoxelData:
 	for v in voxel_terrain.voxel_data:
