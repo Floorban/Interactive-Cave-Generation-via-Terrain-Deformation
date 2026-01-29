@@ -5,7 +5,7 @@
 
 [node name="CaveGenerator" type="Node3D" unique_id=2143282384 node_paths=PackedStringArray("walkers") groups=["generator"]]
 script = ExtResource("1_byicc")
-walkers = [NodePath("CaveWalker1"), NodePath("CaveWalker2"), NodePath("CaveWalker3")]
+walkers = [NodePath("CaveWalker1"), NodePath("CaveWalker2"), NodePath("CaveWalker3"), NodePath("CaveWalker4"), NodePath("CaveWalker5")]
 
 [node name="CaveWalker1" parent="." unique_id=46955504 instance=ExtResource("2_pvqeu")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -11.992096)
@@ -15,10 +15,23 @@ y_range = Vector2(-0.5, 0.2)
 
 [node name="CaveWalker2" parent="." unique_id=706883623 instance=ExtResource("2_pvqeu")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.7391624, -8.804513, -0.47842312)
-random_walk_length = 50
 y_range = Vector2(-0.3, 0.2)
 
 [node name="CaveWalker3" parent="." unique_id=958379903 instance=ExtResource("2_pvqeu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5495386, -4.8346844, -21.190432)
+random_walk_length = 30
+x_range = Vector2(-0.5, 0.3)
+y_range = Vector2(-0.5, 0.4)
+z_range = Vector2(-0.2, 0.5)
+
+[node name="CaveWalker4" parent="." unique_id=92671862 instance=ExtResource("2_pvqeu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5495386, -4.8346844, -21.190432)
+random_walk_length = 30
+x_range = Vector2(-0.5, 0.3)
+y_range = Vector2(-0.5, 0.4)
+z_range = Vector2(-0.2, 0.5)
+
+[node name="CaveWalker5" parent="." unique_id=522627409 instance=ExtResource("2_pvqeu")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5495386, -4.8346844, -21.190432)
 random_walk_length = 30
 x_range = Vector2(-0.5, 0.3)

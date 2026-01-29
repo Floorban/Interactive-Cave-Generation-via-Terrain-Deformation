@@ -69,6 +69,9 @@ label_settings = SubResource("LabelSettings_102p1")
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/grabber_offset = 12
+min_value = 1.0
+max_value = 5.0
+value = 1.0
 ticks_on_borders = true
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="." unique_id=161637646]
@@ -85,6 +88,8 @@ label_settings = SubResource("LabelSettings_102p1")
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/grabber_offset = 12
+max_value = 1.0
+step = 0.1
 ticks_on_borders = true
 
 [node name="VBoxContainer3" type="VBoxContainer" parent="." unique_id=1461064079]
@@ -101,6 +106,10 @@ label_settings = SubResource("LabelSettings_102p1")
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/grabber_offset = 12
+min_value = 0.5
+max_value = 5.0
+step = 0.5
+value = 0.5
 ticks_on_borders = true
 
 [node name="VBoxContainer4" type="VBoxContainer" parent="." unique_id=213873186]
@@ -117,22 +126,42 @@ label_settings = SubResource("LabelSettings_102p1")
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/grabber_offset = 12
+min_value = 10.0
+value = 10.0
 ticks_on_borders = true
 
 [node name="VBoxContainer5" type="VBoxContainer" parent="." unique_id=20786585]
 layout_mode = 2
-theme_override_constants/separation = -2
+theme_override_constants/separation = 0
 
 [node name="LabelDecorBranch5" type="Label" parent="VBoxContainer5" unique_id=1074397631]
 layout_mode = 2
 theme_override_font_sizes/font_size = 8
-text = "Cave Direction"
+text = "Cave Direction (XYZ)"
 label_settings = SubResource("LabelSettings_102p1")
 
-[node name="SliderCaveDirection" type="HSlider" parent="VBoxContainer5" unique_id=38754639]
+[node name="SliderCaveDirX" type="HSlider" parent="VBoxContainer5" unique_id=38754639]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_constants/grabber_offset = 12
+min_value = -1.0
+max_value = 1.0
+step = 0.25
+ticks_on_borders = true
+
+[node name="SliderCaveDirY" type="HSlider" parent="VBoxContainer5" unique_id=1969087641]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -1.0
+max_value = 1.0
+step = 0.25
+ticks_on_borders = true
+
+[node name="SliderCaveDirZ" type="HSlider" parent="VBoxContainer5" unique_id=981312501]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = -1.0
+max_value = 1.0
+step = 0.25
 ticks_on_borders = true
 
 [node name="HSeparator" type="HSeparator" parent="." unique_id=873238296]

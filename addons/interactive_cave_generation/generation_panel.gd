@@ -7,6 +7,14 @@ const CAMERA = preload("uid://jhfruvrqqktf")
 
 var undo_redo : EditorUndoRedoManager
 
+@onready var slider_cave_branch: HSlider = %SliderCaveBranch
+@onready var slider_cave_density: HSlider = %SliderCaveDensity
+@onready var slider_cave_size: HSlider = %SliderCaveSize
+@onready var slider_cave_length: HSlider = %SliderCaveLength
+@onready var slider_cave_dir_x: HSlider = %SliderCaveDirX
+@onready var slider_cave_dir_y: HSlider = %SliderCaveDirY
+@onready var slider_cave_dir_z: HSlider = %SliderCaveDirZ
+
 @onready var button_generate: Button = %ButtonGenerate
 @onready var button_undo_gen: Button = %ButtonUndo
 @onready var button_clear: Button = %ButtonClear
@@ -14,7 +22,8 @@ var undo_redo : EditorUndoRedoManager
 @onready var cave_decor_obj: CaveResourcePicker = $CaveResourcePicker
 @onready var button_clear_decor: Button = %ButtonClearDecor
 @onready var button_randomize: Button = %ButtonRandomize
-@onready var density_slider: HSlider = %SliderDecorDensity
+@onready var slider_decor_density: HSlider = %SliderDecorDensity
+@onready var slider_decor_size: HSlider = %SliderDecorSize
 @export var decor_seed: int = 0
 
 func _ready() -> void:
@@ -23,7 +32,7 @@ func _ready() -> void:
 	button_clear.pressed.connect(_on_clear_pressed)
 	button_clear_decor.pressed.connect(_on_decor_clear_pressed)
 	button_randomize.pressed.connect(_on_randomize_pressed)
-	density_slider.value_changed.connect(_on_decorate_pressed)
+	slider_decor_density.value_changed.connect(_on_decorate_pressed)
 
 func _init_generator_essentials() -> void:
 	if get_current_scene() == null: return
@@ -56,7 +65,7 @@ func spawn_decor_objects(generator: CaveGenerator, obj_scene: PackedScene):
 	rng.seed = decor_seed
 	
 	for pos in generator.wall_marker_positions:
-		if rng.randf() * density_slider.max_value < density_slider.value:
+		if rng.randf() * slider_decor_density.max_value < slider_decor_density.value:
 			var obj = obj_scene.instantiate()
 			generator.add_child(obj)
 			obj.owner = generator.owner
@@ -137,7 +146,7 @@ func _on_decor_clear_pressed() -> void:
 
 func _on_randomize_pressed() -> void:
 	decor_seed = randi()
-	_on_decorate_pressed(density_slider.value)
+	_on_decorate_pressed(slider_decor_density.value)
 	print("New decor seed:", decor_seed)
 
 func get_current_scene():
