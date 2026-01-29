@@ -34,6 +34,18 @@ func _ready() -> void:
 	button_randomize.pressed.connect(_on_randomize_pressed)
 	slider_decor_density.value_changed.connect(_on_decorate_pressed)
 
+func _set_walker_params() -> void:
+	var generator = get_tree().get_first_node_in_group("generator")
+	if not generator: 
+		return
+	var walker: CaveWalker = generator.walkers[0]
+	if walker:
+		walker.removal_size = slider_cave_size.value
+		walker.random_walk_length = slider_cave_length.value
+		walker.dir_x = slider_cave_dir_x.value
+		walker.dir_y = slider_cave_dir_y.value
+		walker.dir_z = slider_cave_dir_z.value
+
 func _init_generator_essentials() -> void:
 	if get_current_scene() == null: return
 	var scene_root = get_current_scene()
@@ -57,7 +69,7 @@ func _init_generator_essentials() -> void:
 	generator.name = "CaveGenerator"
 	(generator as CaveGenerator).voxel_terrain = terrian
 	(generator as CaveGenerator).voxel_tool = terrian.get_voxel_tool()
-	(generator as CaveGenerator).generate()
+	#(generator as CaveGenerator).generate()
 	print("Start generating")
 
 func spawn_decor_objects(generator: CaveGenerator, obj_scene: PackedScene):
@@ -76,9 +88,8 @@ func spawn_decor_objects(generator: CaveGenerator, obj_scene: PackedScene):
 				rng.randf_range(0, 360),
 				rng.randf_range(0, 360)
 			)
-			var scale_factor = rng.randf_range(0.8, 1.2)
+			var scale_factor = rng.randf_range(-0.2, 0.2) + slider_decor_size.value
 			obj.scale = Vector3.ONE * scale_factor
-
 
 func clear_decor_objects() -> void:
 	var generator = get_tree().get_first_node_in_group("generator")
@@ -95,6 +106,7 @@ func _spawn_player_camera(free_cam: bool) -> void:
 		camera.name = "FlyingCamera"
 
 func _on_generate_pressed() -> void:
+	_set_walker_params()
 	_init_generator_essentials()
 	#undo_redo.create_action("Cave Generation: Has Random Walked")
 	#undo_redo.add_do_property(  "Cave Generation: Cave Generated")

@@ -26,23 +26,39 @@ var current_generation := {}  # Dictionary<Vector3i, int>
 var noise : FastNoiseLite
 
 func _ready() -> void:
-	if walkers.is_empty():
+	if Engine.is_editor_hint():
+		return
+	
+	setup()
+	if current_walker == null:
 		return
 
-	if current_generation.is_empty():
-		current_generation = {
-			"spheres": [],
-			"walker_start_pos": walkers[0].global_position
-		}
-
-	setup()
+	current_generation = {
+		"spheres": [],
+		"walker_start_pos": current_walker.global_position
+	}
+	generation_stack.append(current_generation)
 	random_walk()
+
+func get_valid_walkers() -> Array[CaveWalker]:
+	var result: Array[CaveWalker] = []
+	for w in walkers:
+		if w != null and is_instance_valid(w):
+			result.append(w)
+	return result
 
 func setup():
 	if voxel_terrain == null:
 		voxel_terrain = get_tree().get_first_node_in_group("terrain")
-
 	voxel_tool = voxel_terrain.get_voxel_tool()
+
+	var valid_walkers = get_valid_walkers()
+	if valid_walkers.is_empty():
+		push_error("CaveGenerator: No valid walkers assigned")
+		return
+
+	walkers = valid_walkers
+	current_walker_index = 0
 	current_walker = walkers[0]
 	last_walker = current_walker
 	
@@ -52,13 +68,23 @@ func setup():
 	noise.fractal_octaves = 3
 
 func generate() -> void:
+	setup()
+	if current_walker == null:
+		return
+
 	current_generation = {
 		"spheres": [],
-		"walker_start_pos": walkers[0].global_position
+		"walker_start_pos": current_walker.global_position
 	}
 	generation_stack.append(current_generation)
 
-	setup()
+	#current_walker_index = 0
+	#current_walker = walkers[0]
+
+	random_walk_positions.clear()
+	affected_voxels.clear()
+	wall_marker_positions.clear()
+
 	random_walk()
 
 func undo_generate() -> void:
@@ -83,18 +109,19 @@ func undo_generate() -> void:
 	print("Reverted last cave generation")
 
 func finish_walk():
-	#current_walker.queue_free()
 	last_walker = current_walker
 	current_walker_index += 1
+
 	if current_walker_index < walkers.size():
 		current_walker = walkers[current_walker_index]
 		random_walk()
 	else:
 		set_voxel_meta_data()
 		finish_gen.emit()
+
 		current_walker_index = 0
-	random_walk_positions.clear()
-	affected_voxels.clear()
+		random_walk_positions.clear()
+		affected_voxels.clear()
 
 func random_walk():
 	if not current_walker:
@@ -117,6 +144,7 @@ func random_walk():
 			if wall_point:
 				current_walker.ray.look_at(wall_point)
 				do_sphere_addition(true, wall_point)
+		
 
 	if do_wall_decoration_step:
 		wall_additions_pass()
@@ -134,7 +162,6 @@ func wall_additions_pass():
 		wall_marker_positions.append(raycast_result.position)
 
 	finish_walk()
-
 
 func do_sphere_removal():
 	var radius = get_removal_size()
@@ -176,8 +203,8 @@ func paint_voxel_and_neighbors(voxel_pos: Vector3i, radius: float):
 		return
 
 	var meta = voxel_tool.get_voxel_metadata(voxel_pos)
-	var tex_id = 1
-	print(tex_id)
+	var tex_id = get_texture_for_height(voxel_pos.y)
+
 	if meta == null or not meta.has("id"):
 		voxel_tool.set_voxel_metadata(voxel_pos, {
 			"id": tex_id,
