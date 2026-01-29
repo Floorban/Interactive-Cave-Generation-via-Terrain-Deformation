@@ -7,20 +7,28 @@
 script = ExtResource("1_byicc")
 walkers = [NodePath("CaveWalker1"), NodePath("CaveWalker2"), NodePath("CaveWalker3")]
 
+[node name="Decoration" type="Node3D" parent="." unique_id=1235452884]
+
 [node name="CaveWalker1" parent="." unique_id=46955504 instance=ExtResource("2_pvqeu")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -11.992096)
 random_walk_length = 60
 removal_size = 3.0
+can_walk = null
+direction = null
 y_range = Vector2(-0.5, 0.2)
 
 [node name="CaveWalker2" parent="." unique_id=706883623 instance=ExtResource("2_pvqeu")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.7391624, -8.804513, -0.47842312)
 random_walk_length = 50
+can_walk = null
+direction = null
 y_range = Vector2(-0.3, 0.2)
 
 [node name="CaveWalker3" parent="." unique_id=958379903 instance=ExtResource("2_pvqeu")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5495386, -4.8346844, -21.190432)
 random_walk_length = 30
+can_walk = null
+direction = null
 x_range = Vector2(-0.5, 0.3)
 y_range = Vector2(-0.5, 0.4)
 z_range = Vector2(-0.2, 0.5)

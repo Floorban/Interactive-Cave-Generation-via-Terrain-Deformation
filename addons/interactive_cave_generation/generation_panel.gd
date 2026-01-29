@@ -7,6 +7,14 @@ const CAMERA = preload("uid://jhfruvrqqktf")
 
 var undo_redo : EditorUndoRedoManager
 
+@onready var slider_cave_branch: HSlider = %SliderCaveBranch
+@onready var slider_cave_density: HSlider = %SliderCaveDensity
+@onready var slider_cave_size: HSlider = %SliderCaveSize
+@onready var slider_cave_length: HSlider = %SliderCaveLength
+@onready var slider_cave_dir_x: HSlider = %SliderCaveDirX
+@onready var slider_cave_dir_y: HSlider = %SliderCaveDirY
+@onready var slider_cave_dir_z: HSlider = %SliderCaveDirZ
+
 @onready var button_generate: Button = %ButtonGenerate
 @onready var button_undo_gen: Button = %ButtonUndo
 @onready var button_clear: Button = %ButtonClear
@@ -14,7 +22,8 @@ var undo_redo : EditorUndoRedoManager
 @onready var cave_decor_obj: CaveResourcePicker = $CaveResourcePicker
 @onready var button_clear_decor: Button = %ButtonClearDecor
 @onready var button_randomize: Button = %ButtonRandomize
-@onready var density_slider: HSlider = %SliderDecorDensity
+@onready var slider_decor_density: HSlider = %SliderDecorDensity
+@onready var slider_decor_size: HSlider = %SliderDecorSize
 @export var decor_seed: int = 0
 
 func _ready() -> void:
@@ -23,7 +32,20 @@ func _ready() -> void:
 	button_clear.pressed.connect(_on_clear_pressed)
 	button_clear_decor.pressed.connect(_on_decor_clear_pressed)
 	button_randomize.pressed.connect(_on_randomize_pressed)
-	density_slider.value_changed.connect(_on_decorate_pressed)
+	slider_decor_density.value_changed.connect(_on_decorate_pressed)
+
+func _set_walker_params() -> void:
+	var generator = get_tree().get_first_node_in_group("generator")
+	if not generator:
+		return
+	if generator is CaveGenerator:
+		var branch_count := 0
+		for walker: CaveWalker in generator.walkers:
+			walker.can_walk = true if branch_count < slider_cave_branch.value else false
+			branch_count += 1
+			walker.removal_size = slider_cave_size.value
+			walker.random_walk_length = slider_cave_length.value
+			walker.direction = Vector3(slider_cave_dir_x.value, slider_cave_dir_y.value, slider_cave_dir_z.value)
 
 func _init_generator_essentials() -> void:
 	if get_current_scene() == null: return
@@ -56,9 +78,9 @@ func spawn_decor_objects(generator: CaveGenerator, obj_scene: PackedScene):
 	rng.seed = decor_seed
 	
 	for pos in generator.wall_marker_positions:
-		if rng.randf() * density_slider.max_value < density_slider.value:
+		if rng.randf() * slider_decor_density.max_value < slider_decor_density.value:
 			var obj = obj_scene.instantiate()
-			generator.add_child(obj)
+			generator.decoration.add_child(obj)
 			obj.owner = generator.owner
 			obj.name = "Rock"
 			obj.global_position = pos
@@ -67,14 +89,14 @@ func spawn_decor_objects(generator: CaveGenerator, obj_scene: PackedScene):
 				rng.randf_range(0, 360),
 				rng.randf_range(0, 360)
 			)
-			var scale_factor = rng.randf_range(0.8, 1.2)
+			var scale_factor = slider_decor_size.value + rng.randf_range(-0.2, .2)
 			obj.scale = Vector3.ONE * scale_factor
-
 
 func clear_decor_objects() -> void:
 	var generator = get_tree().get_first_node_in_group("generator")
-	for o in generator.get_children():
-		o.queue_free()
+	if generator is CaveGenerator:
+		for o in generator.decoration.get_children():
+			o.queue_free()
 
 func _spawn_player_camera(free_cam: bool) -> void:
 	if get_current_scene() == null: return
@@ -86,6 +108,7 @@ func _spawn_player_camera(free_cam: bool) -> void:
 		camera.name = "FlyingCamera"
 
 func _on_generate_pressed() -> void:
+	_set_walker_params()
 	_init_generator_essentials()
 	#undo_redo.create_action("Cave Generation: Has Random Walked")
 	#undo_redo.add_do_property(  "Cave Generation: Cave Generated")
@@ -137,7 +160,7 @@ func _on_decor_clear_pressed() -> void:
 
 func _on_randomize_pressed() -> void:
 	decor_seed = randi()
-	_on_decorate_pressed(density_slider.value)
+	_on_decorate_pressed(slider_decor_density.value)
 	print("New decor seed:", decor_seed)
 
 func get_current_scene():

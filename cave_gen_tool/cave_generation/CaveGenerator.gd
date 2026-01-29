@@ -24,6 +24,7 @@ var generation_stack: Array = []
 var current_generation := {}  # Dictionary<Vector3i, int>
 
 var noise : FastNoiseLite
+@onready var decoration: Node3D = $Decoration
 
 func _ready() -> void:
 	if walkers.is_empty():
@@ -86,20 +87,23 @@ func finish_walk():
 	#current_walker.queue_free()
 	last_walker = current_walker
 	current_walker_index += 1
-	if current_walker_index < walkers.size():
+	current_walker = walkers[current_walker_index]
+	if current_walker_index < walkers.size() and current_walker.can_walk:
 		random_walk()
 	else:
 		set_voxel_meta_data()
 		finish_gen.emit()
 		current_walker_index = 0
-	current_walker = walkers[current_walker_index]
 	random_walk_positions.clear()
 	affected_voxels.clear()
 
 func random_walk():
 	if not current_walker:
 		return
-
+	if not current_walker.can_walk:
+		finish_walk()
+		return
+		
 	for i in range(current_walker.random_walk_length):
 		current_walker.global_position += get_random_direction()
 		current_walker.global_position.y = clampf(
