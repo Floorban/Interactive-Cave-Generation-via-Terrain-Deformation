@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dxer6rqpnyv36"]
 
-[ext_resource type="PackedScene" uid="uid://jhfruvrqqktf" path="res://flying_camera.tscn" id="15_u8aj4"]
+[ext_resource type="PackedScene" uid="uid://jhfruvrqqktf" path="res://addons/interactive_cave_generation/cave_gen_tool/assets/flying_camera.tscn" id="15_u8aj4"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_236hd"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)

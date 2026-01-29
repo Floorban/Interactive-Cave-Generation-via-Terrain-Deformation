@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CaveVoxelData" format=3 uid="uid://b1eitinpbqp23"]
+
+[ext_resource type="Script" uid="uid://brerktk8lflgb" path="res://addons/interactive_cave_generation/cave_gen_tool/cave_voxel_data/cave_voxel_data.gd" id="1_wiubk"]
+
+[resource]
+script = ExtResource("1_wiubk")
+voxel_type = "rock"
+base_hp = 3
+min_height = -50.0
+max_height = -30.0
+neighbor_chances = {
+3: 0.1
+}
+metadata/_custom_type_script = "uid://brerktk8lflgb"
