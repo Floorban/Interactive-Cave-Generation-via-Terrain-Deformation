@@ -8,7 +8,7 @@ signal finish_gen
 var voxel_tool : VoxelTool
 
 @export var walkers : Array[CaveWalker] = []
-var current_walker : CaveWalker
+@export var current_walker : CaveWalker
 var last_walker : CaveWalker
 
 var current_walker_index : int = 0
@@ -87,12 +87,12 @@ func finish_walk():
 	last_walker = current_walker
 	current_walker_index += 1
 	if current_walker_index < walkers.size():
-		current_walker = walkers[current_walker_index]
 		random_walk()
 	else:
 		set_voxel_meta_data()
 		finish_gen.emit()
 		current_walker_index = 0
+	current_walker = walkers[current_walker_index]
 	random_walk_positions.clear()
 	affected_voxels.clear()
 
@@ -176,8 +176,8 @@ func paint_voxel_and_neighbors(voxel_pos: Vector3i, radius: float):
 		return
 
 	var meta = voxel_tool.get_voxel_metadata(voxel_pos)
-	var tex_id = 1
-	print(tex_id)
+	var tex_id = get_texture_for_height(voxel_pos.y)
+	
 	if meta == null or not meta.has("id"):
 		voxel_tool.set_voxel_metadata(voxel_pos, {
 			"id": tex_id,
@@ -187,7 +187,7 @@ func paint_voxel_and_neighbors(voxel_pos: Vector3i, radius: float):
 
 		voxel_tool.texture_index = tex_id
 		var world_pos = voxel_terrain.to_global(Vector3(voxel_pos)) # + Vector3.ONE * 0.5
-		voxel_tool.do_sphere(world_pos, 2.5)
+		voxel_tool.do_sphere(world_pos, radius)
 
 	var neighbors = CaveConstants.get_nearby_voxel_positions(voxel_pos)
 	for n_pos in neighbors:
