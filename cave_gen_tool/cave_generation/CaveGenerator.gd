@@ -30,6 +30,10 @@ func _ready() -> void:
 	generate()
 	generate()
 
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_accept"):
+		generate()
+
 func setup():
 	if voxel_terrain == null:
 		voxel_terrain = get_tree().get_first_node_in_group("terrain")
@@ -78,13 +82,13 @@ func finish_walk():
 	#current_walker.queue_free()
 	last_walker = current_walker
 	current_walker_index += 1
-	current_walker = walkers[current_walker_index]
 	if current_walker_index < walkers.size() and current_walker.can_walk:
 		random_walk()
 	else:
 		set_voxel_meta_data()
 		finish_gen.emit()
 		current_walker_index = 0
+	current_walker = walkers[current_walker_index]
 	random_walk_positions.clear()
 	affected_voxels.clear()
 
