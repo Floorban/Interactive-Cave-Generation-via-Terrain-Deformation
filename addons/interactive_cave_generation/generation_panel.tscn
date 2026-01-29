@@ -9,6 +9,12 @@ font_color = Color(0.42352942, 1, 1, 1)
 outline_size = 8
 outline_color = Color(0, 0, 0, 1)
 
+[sub_resource type="LabelSettings" id="LabelSettings_102p1"]
+font_size = 12
+font_color = Color(0.26999682, 0.9946839, 0.54190123, 1)
+outline_size = 4
+outline_color = Color(0, 0, 0, 1)
+
 [node name="GenerationPanel" type="VBoxContainer" unique_id=1073525388]
 script = ExtResource("1_nbawv")
 
@@ -70,21 +76,22 @@ theme_override_font_sizes/font_size = 12
 text = "ClearDecor
 "
 
-[node name="ButtonUndoDecor" type="Button" parent="HBoxContainer2" unique_id=1562842985]
+[node name="ButtonRandomize" type="Button" parent="HBoxContainer2" unique_id=491886573]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(60, 30)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 12
-text = "Undo
-"
+text = "Randomize"
 
-[node name="ButtonDecorate" type="Button" parent="HBoxContainer2" unique_id=491886573]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(60, 30)
+[node name="LabelDecorDensity" type="Label" parent="." unique_id=1051511561]
 layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 12
-text = "Decorate
+theme_override_font_sizes/font_size = 8
+text = "Decoration Density"
+label_settings = SubResource("LabelSettings_102p1")
 
-"
+[node name="SliderDecorDensity" type="HSlider" parent="." unique_id=36117411]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/grabber_offset = 12
+ticks_on_borders = true

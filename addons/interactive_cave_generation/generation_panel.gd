@@ -13,14 +13,17 @@ var undo_redo : EditorUndoRedoManager
 
 @onready var cave_decor_obj: CaveResourcePicker = $CaveResourcePicker
 @onready var button_clear_decor: Button = %ButtonClearDecor
-@onready var button_undo_decor: Button = %ButtonUndoDecor
-@onready var button_decorate: Button = %ButtonDecorate
+@onready var button_randomize: Button = %ButtonRandomize
+@onready var density_slider: HSlider = %SliderDecorDensity
+@export var decor_seed: int = 0
 
 func _ready() -> void:
 	button_generate.pressed.connect(_on_generate_pressed)
 	button_undo_gen.pressed.connect(_on_gen_undo_pressed)
 	button_clear.pressed.connect(_on_clear_pressed)
-	button_decorate.pressed.connect(_on_decorate_pressed)
+	button_clear_decor.pressed.connect(_on_decor_clear_pressed)
+	button_randomize.pressed.connect(_on_randomize_pressed)
+	density_slider.value_changed.connect(_on_decorate_pressed)
 
 func _init_generator_essentials() -> void:
 	if get_current_scene() == null: return
@@ -47,6 +50,31 @@ func _init_generator_essentials() -> void:
 	(generator as CaveGenerator).voxel_tool = terrian.get_voxel_tool()
 	(generator as CaveGenerator).generate()
 	print("Start generating")
+
+func spawn_decor_objects(generator: CaveGenerator, obj_scene: PackedScene):
+	var rng = RandomNumberGenerator.new()
+	rng.seed = decor_seed
+	
+	for pos in generator.wall_marker_positions:
+		if rng.randf() * density_slider.max_value < density_slider.value:
+			var obj = obj_scene.instantiate()
+			generator.add_child(obj)
+			obj.owner = generator.owner
+			obj.name = "Rock"
+			obj.global_position = pos
+			obj.rotation_degrees = Vector3(
+				rng.randf_range(0, 360),
+				rng.randf_range(0, 360),
+				rng.randf_range(0, 360)
+			)
+			var scale_factor = rng.randf_range(0.8, 1.2)
+			obj.scale = Vector3.ONE * scale_factor
+
+
+func clear_decor_objects() -> void:
+	var generator = get_tree().get_first_node_in_group("generator")
+	for o in generator.get_children():
+		o.queue_free()
 
 func _spawn_player_camera(free_cam: bool) -> void:
 	if get_current_scene() == null: return
@@ -94,14 +122,23 @@ func _on_clear_pressed() -> void:
 	if generator is CaveGenerator: 
 		generator.queue_free()
 
-func _on_decorate_pressed() -> void:
+func _on_decorate_pressed(value) -> void:
 	if get_current_scene() == null: return
 	var scene_root = get_current_scene()
 	if cave_decor_obj.edited_resource:
+		clear_decor_objects()
 		var generator = get_tree().get_first_node_in_group("generator")
-		spawn_objects_from_markers(generator, cave_decor_obj.edited_resource)
+		spawn_decor_objects(generator, cave_decor_obj.edited_resource)
 	else:
 		print("no obj selected")
+
+func _on_decor_clear_pressed() -> void:
+	clear_decor_objects()
+
+func _on_randomize_pressed() -> void:
+	decor_seed = randi()
+	_on_decorate_pressed(density_slider.value)
+	print("New decor seed:", decor_seed)
 
 func get_current_scene():
 	var scene_root = EditorInterface.get_edited_scene_root()
@@ -109,11 +146,3 @@ func get_current_scene():
 		push_warning("No active scene found")
 		return null
 	return scene_root
-
-func spawn_objects_from_markers(generator: CaveGenerator, obj_scene: PackedScene):
-	for pos in generator.wall_marker_positions:
-		var obj = obj_scene.instantiate()
-		generator.add_child(obj)
-		obj.owner = generator.owner
-		obj.name = "Rock"
-		obj.global_position = pos

@@ -10,7 +10,7 @@ class_name CaveVoxelData
 @export var min_height: float
 @export var max_height: float
 
-# neighbors dictionary: key = id, value = chance weight
+# key = id, value = chance weight
 @export var neighbor_chances: Dictionary = {}
 
 func get_random_neighbor() -> int:
