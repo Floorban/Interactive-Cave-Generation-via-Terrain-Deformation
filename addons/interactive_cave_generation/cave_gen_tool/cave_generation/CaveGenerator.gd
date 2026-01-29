@@ -11,7 +11,7 @@ var voxel_tool : VoxelTool
 
 @export var show_walker : bool = true
 @export var walkers : Array[CaveWalker] = []
-var current_walker : CaveWalker
+@export var current_walker : CaveWalker
 var last_walker : CaveWalker
 
 var current_walker_index : int = 0
@@ -119,10 +119,10 @@ func finish_walk():
 	else:
 		set_voxel_meta_data()
 		finish_gen.emit()
-
 		current_walker_index = 0
-		random_walk_positions.clear()
-		affected_voxels.clear()
+		current_walker = walkers[0]
+	random_walk_positions.clear()
+	affected_voxels.clear()
 
 func random_walk():
 	if not current_walker:
