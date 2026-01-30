@@ -48,6 +48,7 @@ func assign_textures_to_voxel(voxel: Voxel) -> void:
 		push_warning("Not enough textures in the editor array")
 
 func _set_walker_params() -> void:
+	print("a")
 	var generator = get_tree().get_first_node_in_group("generator")
 	if not generator:
 		return
